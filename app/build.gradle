@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    signingConfigs {
+        release
+    }
+
+    // To let gradle automate signing process, lintOptions to be added
+    lintOptions {
+        abortOnError false
+    }
+
+    defaultConfig {
+        applicationId "${APPLICATION_ID}"
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Defining the app name
+        // (Both as build config constant and string resource value)
+        buildConfigField "String", "APP_NAME", "\"$APP_NAME\""
+        resValue "string", "app_name", APP_NAME
+
+        // Defining the colors
+        // (Only as color resource value. We don't need create build config constant)
+        resValue "color", "colorPrimary", THEME_COLOR
+        resValue "color", "colorPrimaryDark", THEME_COLOR
+    }
+
+	buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation 'com.google.android.material:material:1.1.0'
+}
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file(KEYSTORE_INFO_FILE)
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+if (keystorePropertiesFile.exists() && keystorePropertiesFile.canRead()) {
+    // Load your keystore.properties file into the keystoreProperties object.
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+    if ((keystoreProperties != null) && keystoreProperties.containsKey('STORE_FILE')
+        && keystoreProperties.containsKey('KEY_STORE_PASSWORD')
+        && keystoreProperties.containsKey('KEY_ALIAS')
+        && keystoreProperties.containsKey('KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = rootProject.file(keystoreProperties['STORE_FILE'])
+        android.signingConfigs.release.storePassword = keystoreProperties['KEY_STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = keystoreProperties['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = keystoreProperties['KEY_PASSWORD']
+
+        println 'signing.properties found'
+        android.buildTypes.release.signingConfig = android.signingConfigs.release
+
+    } else {
+        println 'signing.properties found but some entries are missing'
+        android.buildTypes.release.signingConfig = null
+    }
+
+} else {
+    println 'signing.properties not found'
+    android.buildTypes.release.signingConfig = null
+}

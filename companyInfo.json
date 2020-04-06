@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "app_name": "Google Genius",
+        "package_name": "com.ehsanfahad.googlegenius.appautomate",
+        "theme_color": "#0F9D58",
+        "app_icon": "https://img.icons8.com/bubbles/2x/google-logo.png",
+        "keystore_owner": "App Automate Inc.",
+        "keystore_organizational_unit": "Coding Playground",
+        "keystore_organization": "Google Inc",
+        "keystore_country": "BD"
+    },
+    {
+        "id": 2,
+        "app_name": "Facebook Fantabulous",
+        "package_name": "com.ehsanfahad.fbfantabulous.appautomate",
+        "theme_color": "#4267B2",
+        "app_icon": "https://img.icons8.com/officel/2x/facebook-new.png",
+        "keystore_owner": "App Automate Inc.",
+        "keystore_organizational_unit": "Coding Playground",
+        "keystore_organization": "Google Inc",
+        "keystore_country": "BD"
+    }
+]
