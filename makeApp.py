@@ -21,7 +21,7 @@ input_key_filename = ""
 input_store_pass = ""
 input_key_alias = ""
 input_key_pass = ""
-keystore_exists = True
+keystore_exists = False
 
 
 # Function for overwriting gradle.properties file
@@ -63,8 +63,22 @@ def createKeystore(item_dict):
     global input_key_pass
     global keystore_exists
 
-    # Delete previous keystore file, if any
-    if os.path.exists(constants.KEYSTORE_FOLDER + input_key_filename + '.jks'):
+    if keystore_exists:
+        # If keystore already exists, there is no need to create a new keystore
+        if os.path.exists(constants.KEYSTORE_FOLDER + input_key_filename + '.jks'):
+            print('\nKeystore file found!')
+            return True
+
+        # If keystore does not exist, and user did not give enough information
+        # to create a new keystore, then we have nothing to do
+        else:
+            print(('\nNo keystore file is found with the given name,'
+                + ' and you did not give enough information to create a new keystore.'))
+            keystore_exists = False
+            return False
+
+    # If keystore already exists, there is no need to create a new keystore
+    elif os.path.exists(constants.KEYSTORE_FOLDER + input_key_filename + '.jks'):
         print(('\nA keystore file is found with same name.'
             + ' So new keystore file will not be created and the existing keystore file will be used.'))
         keystore_exists = True
@@ -164,7 +178,7 @@ def renameSignedApk(item_dict):
         os.remove(constants.RELEASE_APK_FOLDER + item_dict[constants.JSON_KEY_APP_NAME] + '.apk')
     except:
         # Eat exception
-        print('')
+        print('', end='')
 
     os.rename(constants.RELEASE_APK_FOLDER + constants.RELEASE_APK_FILE_NAME,
         constants.RELEASE_APK_FOLDER + item_dict[constants.JSON_KEY_APP_NAME] + '.apk')
@@ -200,9 +214,18 @@ def main():
     global input_store_pass
     global input_key_alias
     global input_key_pass
+    global keystore_exists
 
-    if len(sys.argv) is not 5:
-        print('Parameter list length error: python3 <company_id> <keystore_filename> <key_alias> <keystore_password>')
+    if len(sys.argv) is 3:
+        keystore_exists = True
+
+    elif len(sys.argv) is 5:
+        keystore_exists = False
+
+    else:
+        print('Parameter list length error: syntax:')
+        print('\tpython3 makeApp.py <company_id> <keystore_filename> <key_alias> <keystore_password>')
+        print('\tpython3 makeApp.py <company_id> <existing_keystore_filename>')
         return
 
     # Take input from command line arguments
