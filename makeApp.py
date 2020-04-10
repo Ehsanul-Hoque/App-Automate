@@ -219,8 +219,16 @@ def main():
     if len(sys.argv) is 3:
         keystore_exists = True
 
+        # Take input from command line arguments
+        (input_company_id, input_key_filename) = (int(sys.argv[1]), sys.argv[2])
+        input_key_alias = ""
+        input_store_pass = ""
+
     elif len(sys.argv) is 5:
         keystore_exists = False
+
+        # Take input from command line arguments
+        (input_company_id, input_key_filename, input_key_alias, input_store_pass) = (int(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4])
 
     else:
         print('Parameter list length error: syntax:')
@@ -228,8 +236,6 @@ def main():
         print('\tpython3 makeApp.py <company_id> <existing_keystore_filename>')
         return
 
-    # Take input from command line arguments
-    (input_company_id, input_key_filename, input_key_alias, input_store_pass) = (int(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4])
     input_key_pass = input_store_pass
 
     # Read companies from json
